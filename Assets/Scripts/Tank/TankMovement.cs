@@ -18,13 +18,26 @@ public class TankMovement : MonoBehaviour
 	private float turnInputValue;
 	private float originalPitch;
 
-	void Start() {
+	void Awake() {
 		rb = GetComponent<Rigidbody> ();
+	}
+
+	void Start() {
 
 		movementInputName = "Vertical" + playerNumber.ToString();
 		turnInputName = "Horizontal" + playerNumber.ToString();
 
 		originalPitch = drivingSoundsAudioSource.pitch;
+	}
+
+	void OnEnable() {
+		rb.isKinematic = false;
+
+
+	}
+
+	void OnDisable() {
+		rb.isKinematic = true;
 	}
 
 	void Update() {
