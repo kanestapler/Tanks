@@ -3,47 +3,67 @@ using UnityEngine.UI;
 
 public class TankShooting : MonoBehaviour
 {
-    public int m_PlayerNumber = 1;       
-    public Rigidbody m_Shell;            
-    public Transform m_FireTransform;    
-    public Slider m_AimSlider;           
-    public AudioSource m_ShootingAudio;  
-    public AudioClip m_ChargingClip;     
-    public AudioClip m_FireClip;         
-    public float m_MinLaunchForce = 15f; 
-    public float m_MaxLaunchForce = 30f; 
-    public float m_MaxChargeTime = 0.75f;
+    
+	public int playerNumber = 1;
+	public float minShotForce = 15.0f;
+	public float maxShotForce = 30.0f;
+	public float maxChargeTime = 0.75f;
+	public AudioSource shootingAudioSource;
+	public AudioClip chargingAudioClip;
+	public AudioClip firingAudioClip;
+	public GameObject shell;
 
-    /*
-    private string m_FireButton;         
-    private float m_CurrentLaunchForce;  
-    private float m_ChargeSpeed;         
-    private bool m_Fired;                
+	private string fireButton;
+	private float currentLaunchForce;
+	private Slider aimSlider;
+	private string playerFireButton;
+	private float chargeRate;
+	private Transform fireOrigin;
 
+	void Awake() {
+		aimSlider = GameObject.Find ("AimSlider").GetComponent<Slider> ();
+		fireOrigin = GameObject.Find ("FireOrigin").transform;
+	}
 
-    private void OnEnable()
-    {
-        m_CurrentLaunchForce = m_MinLaunchForce;
-        m_AimSlider.value = m_MinLaunchForce;
-    }
+	void OnEnable () {
+		currentLaunchForce = minShotForce;
+		aimSlider.value = minShotForce;
+	}
 
+	void Start(){
+		playerFireButton = "Fire" + playerNumber.ToString ();
+		chargeRate = (maxShotForce - minShotForce) / maxChargeTime;
+	}
 
-    private void Start()
-    {
-        m_FireButton = "Fire" + m_PlayerNumber;
+	void Update() {
+		aimSlider.value = minShotForce;
 
-        m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
-    }
-    */
+		if (Input.GetButtonDown (playerFireButton)) {
+			currentLaunchForce = minShotForce;
+			shootingAudioSource.clip = chargingAudioClip;
+			shootingAudioSource.Play ();
+		} else if (Input.GetButton (playerFireButton)) {
+			
+			if (currentLaunchForce > maxShotForce) {
+				currentLaunchForce = maxShotForce;
+			} else {
+				currentLaunchForce += chargeRate * Time.deltaTime;
+			}
+			aimSlider.value = currentLaunchForce;
+		} else if (Input.GetButtonUp (playerFireButton)) {
+			if (currentLaunchForce > maxShotForce) {
+				currentLaunchForce = maxShotForce;
+			}
+			Fire();
+		}
+	}
 
-    private void Update()
-    {
-        // Track the current state of the fire button and make decisions based on the current launch force.
-    }
+	void Fire() {
+		shootingAudioSource.clip = firingAudioClip;
+		shootingAudioSource.Play ();
+		GameObject shellFired = Instantiate (shell, fireOrigin.position, fireOrigin.rotation) as GameObject;
+		shellFired.GetComponent<Rigidbody> ().velocity = currentLaunchForce * fireOrigin.forward;
+		currentLaunchForce = minShotForce;
+	}
 
-
-    private void Fire()
-    {
-        // Instantiate and launch the shell.
-    }
 }

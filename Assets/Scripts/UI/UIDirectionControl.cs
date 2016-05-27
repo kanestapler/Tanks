@@ -2,21 +2,19 @@ using UnityEngine;
 
 public class UIDirectionControl : MonoBehaviour
 {
-    public bool m_UseRelativeRotation = true;  
 
+	public bool lockRotation = true;
 
-    private Quaternion m_RelativeRotation;     
+	private Quaternion startingRotation;
 
+	void Start() {
+		startingRotation = transform.parent.localRotation;
+	}
 
-    private void Start()
-    {
-        m_RelativeRotation = transform.parent.localRotation;
-    }
+	void Update() {
+		if (lockRotation) {
+			transform.rotation = startingRotation;
+		}
+	}
 
-
-    private void Update()
-    {
-        if (m_UseRelativeRotation)
-            transform.rotation = m_RelativeRotation;
-    }
 }
