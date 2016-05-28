@@ -21,8 +21,9 @@ public class TankShooting : MonoBehaviour
 	private Transform fireOrigin;
 
 	void Awake() {
-		aimSlider = GameObject.Find ("AimSlider").GetComponent<Slider> ();
-		fireOrigin = GameObject.Find ("FireOrigin").transform;
+		aimSlider = transform.Find ("Canvas").transform.Find("AimSlider").GetComponent<Slider> ();
+		fireOrigin = transform.Find ("FireOrigin").transform;
+
 	}
 
 	void OnEnable () {

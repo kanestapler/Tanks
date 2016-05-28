@@ -18,7 +18,7 @@ public class TankHealth : MonoBehaviour
     
 	void Awake() {
 		healthSlider = GetComponentInChildren<Slider> ();
-		fillImage = GameObject.Find ("Health Fill").GetComponent<Image> ();
+		fillImage = transform.Find ("Canvas").transform.Find("HealthSlider").transform.Find("Fill Area").GetComponentInChildren<Image> ();
 		explosionParticle = Instantiate (tankExplosion).GetComponent<ParticleSystem> ();
 		explosionAudio = explosionParticle.GetComponent<AudioSource> ();
 		explosionParticle.gameObject.SetActive (false);
