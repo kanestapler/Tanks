@@ -60,7 +60,6 @@ public class ShellExplosion : MonoBehaviour
 		//absolute value of damage
 		damage = Mathf.Abs(damage);
 		//return damage
-		Debug.Log (damage);
 		return damage;
 	}
 }

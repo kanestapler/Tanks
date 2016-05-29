@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class CameraControl : MonoBehaviour
 {
@@ -6,8 +7,8 @@ public class CameraControl : MonoBehaviour
 	public float screenPadding = 4.0f;
 	public float minSize = 6.5f;
 	public float dampTime = 0.2f;
-	public Transform[] targets;
 
+	private List<Transform> targets = new List<Transform>();
 	private Camera cam;
 	private float zoomSpeed;
 	private Vector3 moveVelocity;
@@ -30,7 +31,7 @@ public class CameraControl : MonoBehaviour
 	void FindAveragePosition() {
 		Vector3 averagePosition = new Vector3 ();
 		int numOfTargetsActive = 0;
-		for (int i = 0; i < targets.Length; i++) {
+		for (int i = 0; i < targets.Count; i++) {
 			if (!targets [i].gameObject.activeSelf)
 				continue;
 			averagePosition += targets [i].position;
@@ -49,10 +50,11 @@ public class CameraControl : MonoBehaviour
 	}
 
 	float FindRequiredSize() {
+
 		float size = 0.0f;
 		Vector3 desiredLocalPos = transform.InverseTransformPoint (desiredPosition);
 
-		for (int i = 0; i < targets.Length; i++) {
+		for (int i = 0; i < targets.Count; i++) {
 			if (!targets [i].gameObject.activeSelf)
 				continue;
 			Vector3 targetLocalPos = transform.InverseTransformPoint (targets [i].position);
@@ -69,8 +71,22 @@ public class CameraControl : MonoBehaviour
 	}
 
 	public void SetStartPositionAndSize() {
+		//temp until fix is found
+		cam = GetComponentInChildren<Camera> ();
 		cam.orthographicSize = FindRequiredSize ();
 		FindAveragePosition ();
 		transform.position = desiredPosition;
+	}
+
+	public void AddTankToCamera(Transform[] tanks) {
+		targets.AddRange (tanks);
+	}
+
+	public void AddTankToCamera(Transform tank) {
+		targets.Add (tank);
+	}
+
+	public void AddTankToCamera(List<Transform> tanks) {
+		targets.AddRange (tanks);
 	}
 }
