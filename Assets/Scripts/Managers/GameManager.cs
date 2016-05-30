@@ -17,17 +17,23 @@ public class GameManager : MonoBehaviour {
 	private int roundNumber = 0;
 	private TankManager roundWinner;
 	private TankManager gameWinner;
+	private SettingsManager settingsManager;
+	private Button playButton;
+	private Button settingsButton;
 
 	void Awake() {
 		cameraControl = GameObject.Find ("Light Rig").GetComponent<CameraControl> ();
 		messageText = GameObject.Find ("MessageText").GetComponent<Text> ();
+		settingsManager = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
+		playButton = GameObject.Find ("PlayButton").GetComponent<Button>();
+		settingsButton = GameObject.Find ("SettingsButton").GetComponent<Button>();
 
 		startWait = new WaitForSeconds (startDelay);
 		endWait = new WaitForSeconds (endDelay);
 
 		SpawnAllTanks ();
 		SetCameraTargets ();
-		StartCoroutine(GameLoop());
+		PreGame ();
 	}
 
 	void SpawnAllTanks() {
@@ -44,15 +50,25 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	void PreGame() {
+		ShellExplosion.maxDamage = 0.0f;
+	}
+
+	void ExitPreGame() {
+		ShellExplosion.maxDamage = ShellExplosion.DAMAGE;
+
+	}
+
 	IEnumerator GameLoop() {
 		yield return RoundStarting ();
 		yield return RoundPlaying ();
 		yield return RoundEnding ();
 
-		if (gameWinner != null) {
-			//game was won
-		} else {
+		if (gameWinner == null) {
 			StartCoroutine (GameLoop ());
+		} else {//Game was won
+			ActivateAllButtons();
+			roundNumber = 0;
 		}
 	}
 
@@ -71,6 +87,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	IEnumerator RoundPlaying() {
+		
 		EnableAllTankControl ();
 		messageText.text = string.Empty;
 		while (!OneTankLeft ()) {
@@ -158,5 +175,27 @@ public class GameManager : MonoBehaviour {
 		for (int i = 0; i < players.Length; i++) {
 			players [i].EnableControl ();
 		}
+	}
+
+	public void Play() {
+		ExitPreGame ();
+		DeactivateAllButtons ();
+		StartCoroutine(GameLoop());
+	}
+
+	void DeactivateAllButtons() {
+		playButton.enabled = false;
+		playButton.GetComponentInChildren<Text> ().text = "";
+		settingsButton.enabled = false;
+		settingsButton.GetComponentInChildren<Text> ().text = "";
+		settingsManager.DeactivateButtons();
+	}
+
+	void ActivateAllButtons() {
+		playButton.enabled = true;
+		playButton.GetComponentInChildren<Text> ().text = "Play";
+		settingsButton.enabled = true;
+		settingsButton.GetComponentInChildren<Text> ().text = "Settings";
+		settingsManager.ActivateButtons();
 	}
 }

@@ -23,6 +23,10 @@ public class TankManager {
 		tankMovement.playerNumber = playerNumber;
 		tankShooting.playerNumber = playerNumber;
 
+		refreshColors ();
+	}
+
+	public void refreshColors() {
 		coloredPlayerText = "<color=#" + ColorUtility.ToHtmlStringRGB(playerColor) + ">Player " + playerNumber.ToString() + "</color>";
 
 		MeshRenderer[] meshes = instance.GetComponentsInChildren<MeshRenderer> ();

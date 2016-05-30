@@ -2,8 +2,10 @@
 
 public class ShellExplosion : MonoBehaviour
 {
+	public static float DAMAGE = 100f;
+
 	public float maxLifetime = 3.0f;
-	public float maxDamage = 100f;
+	public static float maxDamage = 100f;
 	public float explosionForce = 1000f;
 	public float explosionRadius = 5.0f;
 
